@@ -48,7 +48,6 @@ class Field:
             return Field.cross_win
         elif circles_check in lines:
             return Field.circle_win
-
         # If we ran out of black spaces, a tie happened
         if not (0 in field[0] or 0 in field[1] or 0 in field[2]):
             return Field.draw
