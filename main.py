@@ -56,6 +56,7 @@ class Field:
         # Or it's just still active lmao
         return Field.active
 
+    # im just a silly little comment, dont mind me
     def reset(self) -> None:
         self.field = [[Field.empty_cell for x in range(3)] for y in range(3)]
 
