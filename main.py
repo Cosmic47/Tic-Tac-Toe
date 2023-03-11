@@ -44,14 +44,15 @@ class Field:
         ]
 
         # Check new game state
-        for line in lines:
-            if line == crosses_check:
-                return Field.cross_win
-            elif line == circles_check:
-                return Field.circle_win
+        if crosses_check in lines:
+            return Field.cross_win
+        elif circles_check in lines:
+            return Field.circle_win
+
         # If we ran out of black spaces, a tie happened
         if not (0 in field[0] or 0 in field[1] or 0 in field[2]):
             return Field.draw
+
         # Or it's just still active lmao
         return Field.active
 
