@@ -4,7 +4,6 @@ from tkinter import messagebox
 import random
 from typing import Callable, Any
 from ctypes import windll
-#unreal
 
 
 class Field:
@@ -146,7 +145,7 @@ class Bot:
 
 class SuperButton(tk.Label):
     bg = "#000"
-    fg = "#FFF"
+    fg = "#777"
 
     active_bg = "#FFF"
     active_fg = "#000"
@@ -163,6 +162,25 @@ class SuperButton(tk.Label):
     def on_leave(self, event: tk.Event):
         self.configure(bg=self.bg, fg=self.fg)
 
+
+class SuperLabel(tk.Label):
+    def __init__(self, master, text):
+        super().__init__(master, text=text, fg="white", bg="black", font=("Consolas", 18))
+
+r"""
+class SuperRadioButton(tk.Radiobutton):
+
+    def __init__(self, master, text, variable, value):
+        # test_img = ImageTk.PhotoImage(Image.open(r"C:\Users\samos\Desktop\t.png"))
+        test_img = tk.PhotoImage(file=r"C:\Users\samos\Desktop\t.png")
+        super().__init__(master, text=text, variable=variable, value=value,  fg="blue", bg="black",
+                         # selectcolor="black",
+                         font=("Consolas", 18), activebackground="black", activeforeground="white",
+                         indicatoron=False,
+                         selectcolor="#00AAAA"
+                         )
+        self.photo = test_img
+"""
 
 class Main:
     menu_state, local_state, bot_select_state, bot_state, boss_state, help_state = range(6)
@@ -233,22 +251,21 @@ class Main:
         self.main_menu_frame: tk.Frame = main_menu_frame
 
         # Bot options select UI
-        bot_select_frame = tk.Frame(master)
+        bot_select_frame = tk.Frame(master, bg="black")
 
-        desc_label = tk.Label(bot_select_frame, text="Choose who moves the first:")
+        desc_label = SuperLabel(bot_select_frame, "Choose who moves the first \nand start the game:")
 
-        self.player_first_var: tk.IntVar = tk.IntVar(value=True)
-        player_btn = tk.Radiobutton(bot_select_frame, text="Player", variable=self.player_first_var,
-                                    value=Main.player_first)
-        bot_btn = tk.Radiobutton(bot_select_frame, text="Bot", variable=self.player_first_var, value=Main.bot_first)
-        random_btn = tk.Radiobutton(bot_select_frame, text="Random", variable=self.player_first_var, value=Main.random)
-        start_btn = tk.Button(bot_select_frame, text="Start the game!", command=lambda: self.move_to(Main.bot_state))
+        selection_frame = tk.Frame(bot_select_frame, bg="black")
+        player_btn = SuperButton(selection_frame, "Player", lambda: self.against_bot(True))
+        bot_btn = SuperButton(selection_frame, "Bot", lambda: self.against_bot(False))
+        random_btn = SuperButton(selection_frame, "Random", lambda: self.against_bot(bool(random.randint(0, 1))))
+
+        player_btn.pack(anchor="w")
+        bot_btn.pack(anchor="w")
+        random_btn.pack(anchor="w")
 
         desc_label.grid(row=0)
-        player_btn.grid(row=1)
-        bot_btn.grid(row=2)
-        random_btn.grid(row=3)
-        start_btn.grid(row=4)
+        selection_frame.grid(row=1)
 
         self.bot_select_frame: tk.Frame = bot_select_frame
         # Game UI
@@ -269,6 +286,11 @@ class Main:
         back_btn.pack()
 
         self.help_frame: tk.Frame = help_frame
+
+    def against_bot(self, first_turn: bool) -> None:
+        self.player_first = first_turn
+        self.bot.true_if_first = not first_turn
+        self.move_to(Main.bot_state)
 
     def move_to(self, new_state: int) -> None:
         self.state = new_state
@@ -320,17 +342,6 @@ class Main:
             self.make_move(cell_size * y, cell_size * x, vs_bot)
 
     def init_game(self) -> None:
-        # Decide who moves first
-        if self.player_first_var.get() == Main.player_first:
-            self.player_first = True
-            self.bot.true_if_first = False
-        elif self.player_first_var.get() == Main.bot_first:
-            self.player_first = False
-            self.bot.true_if_first = True
-        elif self.player_first_var.get() == Main.random:
-            self.player_first = bool(random.randint(0, 1))
-            self.bot.true_if_first = not self.player_first
-
         # Time the game
         self.game_start_time = time.perf_counter()
 
