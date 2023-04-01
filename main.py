@@ -145,7 +145,7 @@ class Bot:
 
 class SuperButton(tk.Label):
     bg = "#000"
-    fg = "#777"
+    fg = "#888"
 
     active_bg = "#FFF"
     active_fg = "#000"
@@ -167,20 +167,6 @@ class SuperLabel(tk.Label):
     def __init__(self, master, text):
         super().__init__(master, text=text, fg="white", bg="black", font=("Consolas", 18))
 
-r"""
-class SuperRadioButton(tk.Radiobutton):
-
-    def __init__(self, master, text, variable, value):
-        # test_img = ImageTk.PhotoImage(Image.open(r"C:\Users\samos\Desktop\t.png"))
-        test_img = tk.PhotoImage(file=r"C:\Users\samos\Desktop\t.png")
-        super().__init__(master, text=text, variable=variable, value=value,  fg="blue", bg="black",
-                         # selectcolor="black",
-                         font=("Consolas", 18), activebackground="black", activeforeground="white",
-                         indicatoron=False,
-                         selectcolor="#00AAAA"
-                         )
-        self.photo = test_img
-"""
 
 class Main:
     menu_state, local_state, bot_select_state, bot_state, boss_state, help_state = range(6)
@@ -189,7 +175,7 @@ class Main:
 
     char_size = 100
     offset = 8
-    line_width = 12
+    line_width = 10
     cell_size = char_size + offset + line_width
     canvas_size = line_width * 2 + char_size * 3 + offset * 6
 
@@ -253,7 +239,7 @@ class Main:
         # Bot options select UI
         bot_select_frame = tk.Frame(master, bg="black")
 
-        desc_label = SuperLabel(bot_select_frame, "Choose who moves the first \nand start the game:")
+        desc_label = SuperLabel(bot_select_frame, "Choose who moves the first\nand start the game:")
 
         selection_frame = tk.Frame(bot_select_frame, bg="black")
         player_btn = SuperButton(selection_frame, "Player", lambda: self.against_bot(True))
@@ -270,7 +256,7 @@ class Main:
         self.bot_select_frame: tk.Frame = bot_select_frame
         # Game UI
         game_frame = tk.Frame(master)
-        canvas = tk.Canvas(game_frame, width=self.canvas_size, height=self.canvas_size, bg="white")
+        canvas = tk.Canvas(game_frame, width=self.canvas_size, height=self.canvas_size, bg="#111")
         canvas.bind("<Button-1>", lambda event: self.make_move(event.y, event.x, self.vs_bot))
         canvas.pack()
 
@@ -348,11 +334,24 @@ class Main:
         # Draw the grid
         char_size, offset, line_width, canvas_size = Main.char_size, Main.offset, Main.line_width, Main.canvas_size
         half_width = line_width // 2
+        """
         self.canvas.create_image(char_size + offset * 2 + half_width, self.canvas_size / 2, image=self.vert_img)
         self.canvas.create_image(char_size * 2 + offset * 4 + half_width * 3, self.canvas_size / 2, image=self.vert_img)
         self.canvas.create_image(self.canvas_size / 2, char_size + offset * 2 + half_width, image=self.horiz_img)
-        self.canvas.create_image(self.canvas_size / 2, char_size * 2 + offset * 4 + half_width * 3,
-                                 image=self.horiz_img)
+        self.canvas.create_image(self.canvas_size / 2, char_size * 2 + offset * 4 + half_width * 3, image=self.horiz_img)
+        """
+        self.canvas.create_line(char_size + offset * 2 + half_width, 0,
+                                char_size + offset * 2 + half_width, canvas_size,
+                                fill="#444", width=line_width)
+        self.canvas.create_line(char_size * 2 + offset * 4 + half_width * 3, 0,
+                                char_size * 2 + offset * 4 + half_width * 3, canvas_size,
+                                fill="#444", width=line_width)
+        self.canvas.create_line(0, char_size + offset * 2 + half_width,
+                                canvas_size, char_size + offset * 2 + half_width,
+                                fill="#444", width=line_width)
+        self.canvas.create_line(0, char_size * 2 + offset * 4 + half_width * 3,
+                                canvas_size, char_size * 2 + offset * 4 + half_width * 3,
+                                fill="#444", width=line_width)
 
         # Make a move if the bot moves first
         if not self.player_first and self.vs_bot:
