@@ -48,6 +48,7 @@ class Field:
             return Field.cross_win
         elif circles_check in lines:
             return Field.circle_win
+
         # If we ran out of black spaces, a tie happened
         if not (0 in field[0] or 0 in field[1] or 0 in field[2]):
             return Field.draw
@@ -143,7 +144,7 @@ class Bot:
             return 0
 
 
-class SuperButton(tk.Label):
+class FancyButton(tk.Label):
     bg = "#000"
     fg = "#888"
 
@@ -163,7 +164,7 @@ class SuperButton(tk.Label):
         self.configure(bg=self.bg, fg=self.fg)
 
 
-class SuperLabel(tk.Label):
+class FancyLabel(tk.Label):
     def __init__(self, master, text):
         super().__init__(master, text=text, fg="white", bg="black", font=("Consolas", 18))
 
@@ -179,6 +180,7 @@ class Main:
     cell_size = char_size + offset + line_width
     canvas_size = line_width * 2 + char_size * 3 + offset * 6
 
+    """
     help_string = ("This is an implementation of Tic Tac Toe in tkinter.\n"
                    "The rules are simple:\n\n"
                    "On 3x3 grid you can play as an X or O, \n"
@@ -187,6 +189,14 @@ class Main:
                    "whoever gets 3 of their characters in a row (row, column, or diagonal) first wins.\n"
                    "If the grid is completely filled but no one won, the game ends in a tie.\n\n"
                    "Have fun!")
+    """
+    help_string = ("This is a game of Tic Tac Toe written using Python.\n\n"
+                   "The rules are simple:\n"
+                   "1. The game is played on a 3x3 grid.\n"
+                   "2. First player is X, second is O. Players take turns\n   "
+                   "in putting their characters in empty cells.\n"
+                   "3. Whoever first gets 3 of their own characters in a row wins.\n"
+                   "4. If such didn't happen but all squares are filled, game ends in a tie.")
 
     def __init__(self, master):
         self.master: tk.Tk = master
@@ -215,11 +225,11 @@ class Main:
 
         buttons_frame = tk.Frame(main_menu_frame)
 
-        solo_play_btn = SuperButton(buttons_frame, "Play local", lambda: self.move_to(Main.local_state))
-        bot_play_btn = SuperButton(buttons_frame, "Play vs Bot", lambda: self.move_to(Main.bot_select_state))
-        help_btn = SuperButton(buttons_frame, "Help", lambda: self.move_to(Main.help_state))
-        boss_btn = SuperButton(buttons_frame, "???", lambda: messagebox.showinfo("Leave now", "You are not worthy"))
-        quit_btn = SuperButton(buttons_frame, "Quit", master.quit)
+        solo_play_btn = FancyButton(buttons_frame, "Play local", lambda: self.move_to(Main.local_state))
+        bot_play_btn = FancyButton(buttons_frame, "Play vs Bot", lambda: self.move_to(Main.bot_select_state))
+        help_btn = FancyButton(buttons_frame, "Help", lambda: self.move_to(Main.help_state))
+        boss_btn = FancyButton(buttons_frame, "???", lambda: messagebox.showinfo("Leave now", "You are not worthy"))
+        quit_btn = FancyButton(buttons_frame, "Quit", master.quit)
 
         title_label_1.grid(column=0, row=0)
         title_label_2.grid(column=1, row=0)
@@ -239,16 +249,18 @@ class Main:
         # Bot options select UI
         bot_select_frame = tk.Frame(master, bg="black")
 
-        desc_label = SuperLabel(bot_select_frame, "Choose who moves the first\nand start the game:")
+        desc_label = FancyLabel(bot_select_frame, "Choose who moves the first\nand start the game:")
 
         selection_frame = tk.Frame(bot_select_frame, bg="black")
-        player_btn = SuperButton(selection_frame, "Player", lambda: self.against_bot(True))
-        bot_btn = SuperButton(selection_frame, "Bot", lambda: self.against_bot(False))
-        random_btn = SuperButton(selection_frame, "Random", lambda: self.against_bot(bool(random.randint(0, 1))))
+        player_btn = FancyButton(selection_frame, "Player", lambda: self.against_bot(True))
+        bot_btn = FancyButton(selection_frame, "Bot", lambda: self.against_bot(False))
+        random_btn = FancyButton(selection_frame, "Random", lambda: self.against_bot(bool(random.randint(0, 1))))
+        back_btn = FancyButton(selection_frame, "Go back", lambda: self.move_to(Main.menu_state))
 
         player_btn.pack(anchor="w")
         bot_btn.pack(anchor="w")
         random_btn.pack(anchor="w")
+        back_btn.pack()
 
         desc_label.grid(row=0)
         selection_frame.grid(row=1)
@@ -264,10 +276,11 @@ class Main:
         self.game_frame: tk.Frame = game_frame
 
         # Help UI
-        help_frame = tk.Frame(master)
+        help_frame = tk.Frame(master, bg="black")
 
-        help_label = tk.Label(help_frame, text=Main.help_string, font=("Consolas", 12), justify="left")
-        back_btn = tk.Button(help_frame, text="Go back", command=lambda: self.move_to(Main.menu_state))
+        help_label = FancyLabel(help_frame, Main.help_string)
+        help_label.config(justify="left")
+        back_btn = FancyButton(help_frame, text="Go back", command=lambda: self.move_to(Main.menu_state))
         help_label.pack()
         back_btn.pack()
 
