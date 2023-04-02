@@ -83,23 +83,12 @@ class Field:
             futures.append(future)
         return futures
 
-    def debug_print(self) -> None:
-        for y in range(3):
-            for x in range(3):
-                if self.field[y][x] == Field.empty_cell:
-                    print('.', end='')
-                elif self.field[y][x] == Field.cross:
-                    print('X', end='')
-                elif self.field[y][x] == Field.circle:
-                    print('O', end='')
-            print()
-
     def available_moves(self) -> list[tuple[int, int]]:
         return [(y, x) for y in range(3) for x in range(3) if self.field[y][x] == Field.empty_cell]
 
 
 class Bot:
-    def __init__(self, true_if_first: bool):
+    def __init__(self, true_if_first: bool) -> None:
         self.next_move: tuple[int, int] = 1, 1
         self.true_if_first: bool = true_if_first
 
@@ -125,15 +114,15 @@ class Bot:
             return max(scores)
         else:
             move_idx = random.choice([idx for idx, score in enumerate(scores) if score == max(scores)])
-            t = field.available_moves()[move_idx]
-            self.next_move = t
+            next_move = field.available_moves()[move_idx]
+            self.next_move = next_move
             return 0
 
     def make_move(self, field: Field, turn_counter: int) -> tuple[int, int]:
         self.gen_move(field, turn_counter)
         return self.next_move
 
-    def score_game(self, field):
+    def score_game(self, field: Field) -> int:
         state = field.check_state()
 
         if state == Field.cross_win:
@@ -151,16 +140,16 @@ class FancyButton(tk.Label):
     active_bg = "#FFF"
     active_fg = "#000"
 
-    def __init__(self, master: tk.Frame, text: str, command: Callable[[], Any]):
+    def __init__(self, master: tk.Frame, text: str, command: Callable[[], Any]) -> None:
         super().__init__(master, text=text, bg=self.bg, fg=self.fg, font=("Consolas", 18))
         self.bind("<ButtonRelease-1>", lambda ev: command())
         self.bind("<Enter>", lambda ev: self.on_hover(ev))
         self.bind("<Leave>", lambda ev: self.on_leave(ev))
 
-    def on_hover(self, event: tk.Event):
+    def on_hover(self, event: tk.Event) -> None:
         self.configure(bg=self.active_bg, fg=self.active_fg)
 
-    def on_leave(self, event: tk.Event):
+    def on_leave(self, event: tk.Event) -> None:
         self.configure(bg=self.bg, fg=self.fg)
 
 
@@ -180,16 +169,6 @@ class Main:
     cell_size = char_size + offset + line_width
     canvas_size = line_width * 2 + char_size * 3 + offset * 6
 
-    """
-    help_string = ("This is an implementation of Tic Tac Toe in tkinter.\n"
-                   "The rules are simple:\n\n"
-                   "On 3x3 grid you can play as an X or O, \n"
-                   "depending on whether you move first or your opponent does.\n"
-                   "You and your opponent place corresponding characters in turns, \n"
-                   "whoever gets 3 of their characters in a row (row, column, or diagonal) first wins.\n"
-                   "If the grid is completely filled but no one won, the game ends in a tie.\n\n"
-                   "Have fun!")
-    """
     help_string = ("This is a game of Tic Tac Toe written using Python.\n\n"
                    "The rules are simple:\n"
                    "1. The game is played on a 3x3 grid.\n"
@@ -198,7 +177,7 @@ class Main:
                    "3. Whoever first gets 3 of their own characters in a row wins.\n"
                    "4. If such didn't happen but all squares are filled, game ends in a tie.")
 
-    def __init__(self, master):
+    def __init__(self, master: tk.Tk) -> None:
         self.master: tk.Tk = master
         self.state: int = Main.menu_state  # state variable that determines current menu state
 
@@ -235,22 +214,20 @@ class Main:
         title_label_2.grid(column=1, row=0)
         title_label_3.grid(column=2, row=0)
         title_frame.pack()
-        # ps_label.pack()
         solo_play_btn.grid(row=0, sticky="ew")
         bot_play_btn.grid(row=1, sticky="ew")
         help_btn.grid(row=2, sticky="ew")
         boss_btn.grid(row=3, sticky="ew")
         quit_btn.grid(row=4, sticky="ew")
         buttons_frame.pack()
-
         main_menu_frame.pack()
+
         self.main_menu_frame: tk.Frame = main_menu_frame
 
         # Bot options select UI
         bot_select_frame = tk.Frame(master, bg="black")
 
         desc_label = FancyLabel(bot_select_frame, "Choose who moves the first\nand start the game:")
-
         selection_frame = tk.Frame(bot_select_frame, bg="black")
         player_btn = FancyButton(selection_frame, "Player", lambda: self.against_bot(True))
         bot_btn = FancyButton(selection_frame, "Bot", lambda: self.against_bot(False))
@@ -261,11 +238,11 @@ class Main:
         bot_btn.pack(anchor="w")
         random_btn.pack(anchor="w")
         back_btn.pack()
-
         desc_label.grid(row=0)
         selection_frame.grid(row=1)
 
         self.bot_select_frame: tk.Frame = bot_select_frame
+
         # Game UI
         game_frame = tk.Frame(master)
         canvas = tk.Canvas(game_frame, width=self.canvas_size, height=self.canvas_size, bg="#111")
@@ -347,12 +324,6 @@ class Main:
         # Draw the grid
         char_size, offset, line_width, canvas_size = Main.char_size, Main.offset, Main.line_width, Main.canvas_size
         half_width = line_width // 2
-        """
-        self.canvas.create_image(char_size + offset * 2 + half_width, self.canvas_size / 2, image=self.vert_img)
-        self.canvas.create_image(char_size * 2 + offset * 4 + half_width * 3, self.canvas_size / 2, image=self.vert_img)
-        self.canvas.create_image(self.canvas_size / 2, char_size + offset * 2 + half_width, image=self.horiz_img)
-        self.canvas.create_image(self.canvas_size / 2, char_size * 2 + offset * 4 + half_width * 3, image=self.horiz_img)
-        """
         self.canvas.create_line(char_size + offset * 2 + half_width, 0,
                                 char_size + offset * 2 + half_width, canvas_size,
                                 fill="#444", width=line_width)
